@@ -16,7 +16,7 @@ const {
     Queen_Connect,
     Queen_Msg,
     Queen_Data
-} = require('./queen-md')
+} = require('queen-md')
 
 const {
     OWNER,
