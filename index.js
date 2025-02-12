@@ -5,19 +5,18 @@ const {
     getContentType,
     jidNormalizedUser,
     Browsers,
-    jidDecode
+    jidDecode,
+    makeInMemoryStore
 } = require('@darkcriminal/baileys')
 
-const fs = require('fs')
 const pino = require('pino')
-const qrcode = require('qrcode-terminal')
 const { Boom } = require('@hapi/boom')
-const util = require('util')
 
 const {
     Queen_Connect,
-    Queen_Msg
-} = require('queen-md')
+    Queen_Msg,
+    Queen_Data
+} = require('./queen-md')
 
 const {
     OWNER,
@@ -29,6 +28,13 @@ const {
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
+
+const store = makeInMemoryStore({
+    logger: pino().child({
+        level: 'silent',
+        stream: 'store'
+    })
+})
 
 async function QueenWa() {
     const { state, saveCreds } = await useMultiFileAuthState("./session");
@@ -54,6 +60,8 @@ async function QueenWa() {
             return decode.user && decode.server && decode.user + '@' + decode.server || jid
         } else return jid
     }
+
+    Queen_Data(store, queen)
 }
 
 QueenWa().catch(console.error);
